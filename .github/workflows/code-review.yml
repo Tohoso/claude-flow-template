@@ -9,6 +9,7 @@ on:
 
 env:
   NODE_VERSION: '18'
+  CLAUDE_FLOW_VERSION: 'alpha'
 
 jobs:
   review:
@@ -28,8 +29,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Claude Flowのグローバルインストールをキャッシュ
+      - name: Cache Claude Flow
+        id: cache-claude-flow
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm/_npx
+            /usr/local/lib/node_modules/claude-flow
+          key: claude-flow-${{ env.CLAUDE_FLOW_VERSION }}-${{ runner.os }}
+
       - name: Install Claude Flow
-        run: npm install -g claude-flow@alpha
+        if: steps.cache-claude-flow.outputs.cache-hit != 'true'
+        run: npm install -g claude-flow@${{ env.CLAUDE_FLOW_VERSION }}
 
       - name: Get Changed Files
         id: changed-files
@@ -43,7 +55,7 @@ jobs:
           echo "${{ steps.changed-files.outputs.all_changed_files }}" > /tmp/changed_files.txt
           
           # code-review-swarmを実行
-          npx claude-flow@alpha swarm "Review the following code changes for bugs, security issues, performance problems, and code quality. Changed files: $(cat /tmp/changed_files.txt)" \
+          npx claude-flow@${{ env.CLAUDE_FLOW_VERSION }} swarm "Review the following code changes for bugs, security issues, performance problems, and code quality. Changed files: $(cat /tmp/changed_files.txt)" \
             --agents "security-auditor,performance-analyst,code-reviewer,tester" \
             --strategy parallel \
             --output-format json \

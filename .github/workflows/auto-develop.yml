@@ -6,6 +6,7 @@ on:
 
 env:
   NODE_VERSION: '18'
+  CLAUDE_FLOW_VERSION: 'alpha'
 
 jobs:
   develop:
@@ -29,8 +30,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Claude Flowのグローバルインストールをキャッシュ
+      - name: Cache Claude Flow
+        id: cache-claude-flow
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm/_npx
+            /usr/local/lib/node_modules/claude-flow
+          key: claude-flow-${{ env.CLAUDE_FLOW_VERSION }}-${{ runner.os }}
+
       - name: Install Claude Flow
-        run: npm install -g claude-flow@alpha
+        if: steps.cache-claude-flow.outputs.cache-hit != 'true'
+        run: npm install -g claude-flow@${{ env.CLAUDE_FLOW_VERSION }}
 
       - name: Create feature branch
         run: |
@@ -50,7 +62,7 @@ jobs:
           EOF
           
           # claude-flow swarmを実行
-          npx claude-flow@alpha swarm "Implement the following task based on the issue content. Read the design documents in docs/design/ and docs/specs/ for context. Follow TDD principles. Issue: $(cat /tmp/issue_content.md)" \
+          npx claude-flow@${{ env.CLAUDE_FLOW_VERSION }} swarm "Implement the following task based on the issue content. Read the design documents in docs/design/ and docs/specs/ for context. Follow TDD principles. Issue: $(cat /tmp/issue_content.md)" \
             --agents "planner,architect,coder,tester,reviewer" \
             --strategy parallel \
             --output-format json \

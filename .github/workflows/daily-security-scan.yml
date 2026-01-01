@@ -7,6 +7,7 @@ on:
 
 env:
   NODE_VERSION: '18'
+  CLAUDE_FLOW_VERSION: 'alpha'
 
 jobs:
   security-scan:
@@ -25,16 +26,25 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install Dependencies
-        run: |
-          npm install -g claude-flow@alpha
-          npm ci --ignore-scripts || true
+      # Claude Flowのグローバルインストールをキャッシュ
+      - name: Cache Claude Flow
+        id: cache-claude-flow
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm/_npx
+            /usr/local/lib/node_modules/claude-flow
+          key: claude-flow-${{ env.CLAUDE_FLOW_VERSION }}-${{ runner.os }}
+
+      - name: Install Claude Flow
+        if: steps.cache-claude-flow.outputs.cache-hit != 'true'
+        run: npm install -g claude-flow@${{ env.CLAUDE_FLOW_VERSION }}
 
       - name: Run Security Analysis
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          npx claude-flow@alpha swarm "Analyze the codebase for security vulnerabilities, check dependencies for known CVEs, review authentication and authorization patterns, identify potential data leaks" \
+          npx claude-flow@${{ env.CLAUDE_FLOW_VERSION }} swarm "Analyze the codebase for security vulnerabilities, check dependencies for known CVEs, review authentication and authorization patterns, identify potential data leaks" \
             --agents "security-auditor,dependency-checker,code-reviewer" \
             --strategy parallel \
             --output-format json \
