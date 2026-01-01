@@ -1,0 +1,72 @@
+name: "✨ Feature Request"
+description: "Request a new feature (auto-develop enabled)"
+title: "[Feature]: "
+labels: ["enhancement", "auto-develop"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        
+        This issue will be automatically picked up by Claude Flow for implementation.
+        Please provide as much detail as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: "Describe the feature you'd like to see implemented"
+      placeholder: "A clear and concise description of the feature..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: "Describe the problem this feature would solve"
+      placeholder: "As a user, I want to... so that..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: "Define what 'done' looks like"
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes
+      description: "Any technical considerations or constraints"
+      placeholder: "Optional: API changes, dependencies, etc."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: "How important is this feature?"
+      options:
+        - "High - Critical for release"
+        - "Medium - Important but not blocking"
+        - "Low - Nice to have"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: auto-develop
+    attributes:
+      label: Auto-Development
+      description: "Enable automatic implementation by Claude Flow"
+      options:
+        - label: "I want Claude Flow to automatically implement this feature"
+          required: false

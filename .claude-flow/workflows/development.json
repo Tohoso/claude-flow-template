@@ -1,0 +1,83 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ruvnet/claude-flow/main/schemas/workflow.schema.json",
+  "name": "development",
+  "description": "Standard development workflow with TDD",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "planning",
+      "description": "Analyze requirements and create implementation plan",
+      "agents": ["planner"],
+      "inputs": {
+        "requirements": "${TASK_DESCRIPTION}",
+        "context": "docs/design/",
+        "specs": "docs/specs/"
+      },
+      "outputs": {
+        "plan": "Implementation plan with subtasks",
+        "estimates": "Time and complexity estimates"
+      }
+    },
+    {
+      "name": "architecture",
+      "description": "Design technical architecture",
+      "agents": ["architect"],
+      "dependsOn": ["planning"],
+      "inputs": {
+        "plan": "${planning.outputs.plan}",
+        "existingCode": "src/"
+      },
+      "outputs": {
+        "design": "Technical design document",
+        "interfaces": "API/interface definitions"
+      }
+    },
+    {
+      "name": "test-first",
+      "description": "Write tests before implementation (TDD)",
+      "agents": ["tester"],
+      "dependsOn": ["architecture"],
+      "inputs": {
+        "design": "${architecture.outputs.design}",
+        "interfaces": "${architecture.outputs.interfaces}"
+      },
+      "outputs": {
+        "tests": "Test files",
+        "coverage": "Expected coverage targets"
+      }
+    },
+    {
+      "name": "implementation",
+      "description": "Implement the feature",
+      "agents": ["coder"],
+      "dependsOn": ["test-first"],
+      "inputs": {
+        "design": "${architecture.outputs.design}",
+        "tests": "${test-first.outputs.tests}"
+      },
+      "outputs": {
+        "code": "Implementation files",
+        "documentation": "Inline documentation"
+      }
+    },
+    {
+      "name": "review",
+      "description": "Review implementation",
+      "agents": ["reviewer", "security-auditor"],
+      "dependsOn": ["implementation"],
+      "inputs": {
+        "code": "${implementation.outputs.code}",
+        "tests": "${test-first.outputs.tests}"
+      },
+      "outputs": {
+        "review": "Review comments",
+        "approval": "Approval status"
+      }
+    }
+  ],
+  "errorHandling": {
+    "strategy": "retry",
+    "maxRetries": 2,
+    "fallback": "manual-review"
+  }
+}

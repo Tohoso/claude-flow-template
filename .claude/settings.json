@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(src/**)",
+      "Write(tests/**)",
+      "Write(docs/**)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(git:*)"
+    ],
+    "deny": [
+      "Write(.env*)",
+      "Write(.github/workflows/**)",
+      "Bash(rm:-rf)"
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+name: "📋 Task"
+description: "Create a development task (manual development)"
+title: "[Task]: "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Development Task
+        
+        This is a manual development task. Add the `auto-develop` label if you want Claude Flow to handle it.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: "Describe what needs to be done"
+      placeholder: "A clear description of the task..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: "Define what 'done' looks like"
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-details
+    attributes:
+      label: Technical Details
+      description: "Any technical notes or implementation hints"
+      placeholder: "Files to modify, APIs to use, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: "List any blocking issues or tasks"
+      placeholder: |
+        - #123
+        - #456
+    validations:
+      required: false
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      description: "Estimated complexity"
+      options:
+        - "Small - < 1 hour"
+        - "Medium - 1-4 hours"
+        - "Large - 1-2 days"
+        - "XL - > 2 days"
+    validations:
+      required: true
