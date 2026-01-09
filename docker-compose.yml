@@ -1,0 +1,13 @@
+services:
+  app:
+    build: .
+    container_name: freee-receipt-flow
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # OAuth tokens (persist between restarts)
+      - ./tokens:/app/tokens
+    environment:
+      - NODE_ENV=production
+      - TZ=Asia/Tokyo
