@@ -18,6 +18,9 @@ coverage/
 .env.local
 .env.*.local
 
+# OAuth tokens (sensitive)
+tokens/
+
 # IDE
 .idea/
 .vscode/
